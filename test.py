@@ -18,7 +18,7 @@ def get_args_parser():
     # * Backbone
     parser.add_argument('--backbone', default='vgg16_bn', type=str,
                         help="name of the convolutional backbone to use")
-    parser.add_argument('--dataset', default='all')
+    parser.add_argument('--dataset', default='UCF_CC_50')
     parser.add_argument('--row', default=2, type=int,
                         help="row number of anchor points")
     parser.add_argument('--line', default=2, type=int,
@@ -107,10 +107,7 @@ def main(args, debug=False):
         samples = img.unsqueeze(0).to(device)
         # run inference
         with torch.no_grad():
-            t1 = time.time()
             outputs = model(samples)
-            t2 = time.time()
-            times.append(t2-t1)
             outputs_scores = torch.nn.functional.softmax(outputs['pred_logits'], -1)[:, :, 1][0]
             outputs_points = outputs['pred_points'][0]
 
@@ -146,11 +143,8 @@ def main(args, debug=False):
     mae = np.mean(maes)
     mse = np.sqrt(np.mean(mses))
     print(f'mse: {round(mse, 2)} mae: {round(mae, 2)}')
-    print(np.mean(np.array(times)))
 
 if __name__ == '__main__':
-    start_time = time.time()
     parser = argparse.ArgumentParser('P2PNet evaluation script', parents=[get_args_parser()])
     args = parser.parse_args()
     main(args)
-    print(time.time() - start_time)
