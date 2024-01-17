@@ -10,8 +10,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Prep')
     parser.add_argument('--input_path', default='data', help='data input path')
     parser.add_argument('--output_path', default='dataset', help='data output path')
-    parser.add_argument('--dataset', default='sha', help='dataset name')
-    parser.add_argument('--model', default='')
+    parser.add_argument('--dataset_name', default='sha', help='dataset name')
     args = parser.parse_args()
     return args
 
@@ -142,6 +141,36 @@ def preprocess_sh(input_path, output_path, dataset, max_size):
                     f.write(f'{point1} {point2}\n')
             count += 1
 
+def preprocess_ucfcc(input_path, output_path, dataset, max_size):
+    images_by_mode = dict()
+    images = glob.glob(os.path.join(input_path, '*.jpg'))
+    train_images = images[:int(len(images)*0.8)]
+    val_images = images[int(len(images)*0.8):int(len(images)*0.8) + int(len(images)*0.1)]
+    test_images = images[int(len(images)*0.8) + int(len(images)*0.1):]
+    images_by_mode['train'] = train_images
+    images_by_mode['val'] = val_images
+    images_by_mode['test'] = test_images
+    for mode, image_paths in images_by_mode.items():
+        save_dir = os.path.join(output_path, mode)
+        os.makedirs(save_dir, exist_ok=True)
+        count = 1
+        for image_path in image_paths:
+            name = f'{dataset}_{count:05d}.jpg'
+            image_save_path = os.path.join(save_dir, name)
+            label_path = image_path.replace('.jpg', '_ann.mat')
+            points = loadmat(label_path)['annPoints'].astype(np.float32)
+            if not points.any():
+                continue
+            image = Image.open(image_path).convert('RGB')
+            image, points = reform_data(image, points, max_size)
+            image.save(image_save_path)
+            label_save_path = image_save_path.replace('jpg', 'txt')
+            with open(label_save_path, 'w') as f:
+                for point1, point2 in points:
+                    f.write(f'{point1} {point2}\n')
+            count += 1
+
+
 def record(pth):
     folders = glob.glob(os.path.join(pth, '*'))
     for folder in folders:
@@ -155,18 +184,16 @@ def record(pth):
 
 if __name__ == '__main__':
     args = parse_args()
-    args.output_path = os.path.join(args.model, args.output_path)
-    input_path = os.path.join(args.input_path, args.dataset)
-    output_path = os.path.join(args.output_path, args.dataset)
-    if args.dataset == 'sha' or args.dataset == 'shb':
-        preprocess_sh(input_path, output_path, args.dataset, 1920)
-    elif args.dataset == 'qnrf':
-        preprocess_qnrf(input_path, output_path, args.dataset, 1920)
-    elif args.dataset == 'nwpu':
-        preprocess_nwpu(input_path, output_path, args.dataset, 1920)
+    input_path = os.path.join(args.input_path, args.dataset_name)
+    output_path = os.path.join(args.output_path, args.dataset_name)
+    if args.dataset_name.lower() == 'sha' or args.dataset_name.lower() == 'shb':
+        preprocess_sh(input_path, output_path, args.dataset_name, 1920)
+    elif args.dataset_name.lower() == 'qnrf':
+        preprocess_qnrf(input_path, output_path, args.dataset_name, 1920)
+    elif args.dataset_name.lower() == 'nwpu':
+        preprocess_nwpu(input_path, output_path, args.dataset_name, 1920)
+    elif args.dataset_name.lower() == 'ucf_cc' or args.dataset_name.lower() == 'ucf_cc_50':
+        preprocess_ucfcc(input_path, output_path, args.dataset_name, 1920)
+    else:
+        raise NotImplementedError
     record(output_path)
-
-
-
-
-
