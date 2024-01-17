@@ -59,7 +59,7 @@ def video_to_image(pth, name, ext):
     cap = cv2.VideoCapture(input_path)
 
     # Get the total number of frames
-    total_frames = 300 if int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) > 300 else int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     # Determine the number of digits needed for formatting
     num_digits = len(str(total_frames))
@@ -207,9 +207,7 @@ def main(args, ext, debug=False):
     image_to_video(os.path.join('test'), args.video_name, ext)
 
 if __name__ == '__main__':
-    start_time = time.time()
     parser = argparse.ArgumentParser('P2PNet evaluation script', parents=[get_args_parser()])
     args = parser.parse_args()
     ext = 'jpg'
     main(args, ext)
-    print(time.time() - start_time)
