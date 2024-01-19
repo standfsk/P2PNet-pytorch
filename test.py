@@ -25,7 +25,6 @@ def get_args_parser():
                         help="line number of anchor points")
     parser.add_argument('--threshold', default=0.5)
     parser.add_argument('--crop_size', default=128)
-    parser.add_argument('--verbose', default=True)
     parser.add_argument('--save_path', default='',
                         help='path where to save')
     parser.add_argument('--weight_path', default='',
@@ -35,6 +34,7 @@ def get_args_parser():
                         help='frequency of evaluation, default setting is evaluating in every 5 epoch')
     parser.add_argument('--seed', default=42, type=int)
     parser.add_argument('--gpu_id', default=0, type=int, help='the gpu used for evaluation')
+    parser.add_argument('--verbose', action='store_true', help='Enable verbose mode')
 
     return parser
 
