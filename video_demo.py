@@ -40,6 +40,7 @@ def get_args_parser():
                         help='frequency of evaluation, default setting is evaluating in every 5 epoch')
     parser.add_argument('--gpu_id', default=0, type=int, help='the gpu used for evaluation')
     parser.add_argument('--video_name', default='', help='video')
+    parser.add_argument('--verbose', action='store_true', help='Enable verbose mode')
     return parser
 
 def record(pth, mode, ext):
@@ -202,7 +203,8 @@ def main(args, ext, debug=False):
             # save the visualized image
             cv2.putText(img_to_draw, f'predicted: {predict_cnt}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
             cv2.imwrite(os.path.join(os.path.join('test', f'{args.video_name.split(".")[0]}_output'), f'{os.path.basename(image)}'), img_to_draw)
-            print(f'{os.path.basename(image)} pred_cnt: {predict_cnt}')
+            if args.verbose:
+                print(f'{os.path.basename(image)} pred_cnt: {predict_cnt}')
 
     image_to_video(os.path.join('test'), args.video_name, ext)
 
