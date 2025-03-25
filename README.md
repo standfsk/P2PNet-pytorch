@@ -1,11 +1,8 @@
-This is pytorch implementation of P2PNet paper(https://arxiv.org/abs/2107.12746)
-<br>
-To see the process, visit https://colab.research.google.com/drive/1L7JG72JShqbNJV8PY9c1BwK-U2mWd_uS#scrollTo=yVRQMTk2kIcW
-<br>
-<br>
-For more information please refer to https://github.com/TencentYoutuResearch/CrowdCounting-P2PNet
-<br>
-<br>
+This is unofficial implementation of P2PNet 
+- Paper: https://arxiv.org/abs/2107.12746
+- Colab: https://colab.research.google.com/drive/1L7JG72JShqbNJV8PY9c1BwK-U2mWd_uS#scrollTo=yVRQMTk2kIcW
+- Official Implementation: https://github.com/TencentYoutuResearch/CrowdCounting-P2PNet
+
 ## Intro
 Based on https://github.com/TencentYoutuResearch/CrowdCounting-P2PNet
 - changed preprocessing // preprocess.py
